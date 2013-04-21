@@ -67,25 +67,25 @@ THE SOFTWARE.
 
         this.layer = -1;
         var rows = el.attr("data-rows");
-        if (rows === undefined) 
+        if (rows === undefined)
             rows = 10;
         else
             rows = parseInt(rows);
 
         var columns = el.attr("data-columns");
-        if (columns === undefined) 
+        if (columns === undefined)
             columns = 10;
         else
             columns = parseInt(columns);
 
         var scale = el.attr("data-cellSize");
-        if (scale === undefined) 
+        if (scale === undefined)
             scale = 100;
         else
             scale = parseInt(scale);
 
         var lineWidth = el.attr("data-lineWidth");
-        if (lineWidth === undefined) 
+        if (lineWidth === undefined)
             lineWidth = 10;
         else
             lineWidth = parseInt(lineWidth);
@@ -133,7 +133,7 @@ THE SOFTWARE.
                 if (color === undefined) color = "#000000";
 
                 var lineTextClass = $(ul).attr("data-textClass");
-                if (lineTextClass === undefined) lineTextClass = "";                
+                if (lineTextClass === undefined) lineTextClass = "";
 
                 var shiftCoords = $(ul).attr("data-shiftCoords");
                 if (shiftCoords === undefined) shiftCoords = "";
@@ -146,7 +146,7 @@ THE SOFTWARE.
                 }
 
                 var lineLabel = $(ul).attr("data-label");
-                if (lineLabel === undefined) 
+                if (lineLabel === undefined)
                     lineLabel = "Line " + index;
 
                 lineLabels[lineLabels.length] = {label: lineLabel, color: color};
@@ -214,7 +214,8 @@ THE SOFTWARE.
         ctx.moveTo(nodes[0].x * scale, nodes[0].y * scale);
         var markers = [];
         var lineNodes = [];
-        for(var node = 0; node < nodes.length; node++)
+        var node;
+        for(node = 0; node < nodes.length; node++)
         {
             if (nodes[node].marker.indexOf("@") != 0)
                 lineNodes[lineNodes.length] = nodes[node];
@@ -277,7 +278,7 @@ THE SOFTWARE.
                         case "ne": xVal = (scale / 2); yVal = 1; dirVal = -1; break;
                     }
                     this._debug((currNode.x * scale) + xVal + ", " + (currNode.y * scale) + "; " + (nextNode.x + (dirVal * xDiff / 2)) * scale + ", " +
-                    (nextNode.y + (yVal * xDiff / 2)) * scale)
+                    (nextNode.y + (yVal * xDiff / 2)) * scale);
                     ctx.bezierCurveTo(
                             (currNode.x * scale) + xVal, (currNode.y * scale),
                             (currNode.x * scale) + xVal, (currNode.y * scale),
@@ -290,14 +291,14 @@ THE SOFTWARE.
                 else
                     ctx.lineTo(nextNode.x * scale, nextNode.y * scale);
             }
-        } 
+        }
 
         ctx.strokeStyle = color;
         ctx.lineWidth = width;
         ctx.stroke();
 
         ctx = this._getCanvasLayer(el, true);
-        for (var node = 0; node < nodes.length; node++) {
+        for (node = 0; node < nodes.length; node++) {
             this._drawMarker(el, ctx, scale, color, textClass, width, nodes[node], reverseMarkers);
         }
 
@@ -362,7 +363,7 @@ THE SOFTWARE.
         ctx.closePath();
         ctx.stroke();
         ctx.fill();
-        
+
         // Render text labels and hyperlinks
         var pos = "";
         var offset = width + 4;
@@ -405,8 +406,8 @@ THE SOFTWARE.
         if (data.link != "")
             $("<a " + style + " title='" + data.title.replace(/\\n/g,"<br />") + "' href='" + data.link + "' target='_new'>" + data.label.replace(/\\n/g,"<br />") + "</span>").appendTo(el);
         else
-            $("<span " + style + ">" + data.label.replace(/\\n/g,"<br />") + "</span>").appendTo(el);;
-        
+            $("<span " + style + ">" + data.label.replace(/\\n/g,"<br />") + "</span>").appendTo(el);
+
     },
     _drawGrid: function (el, scale, gridNumbers) {
 
@@ -445,7 +446,7 @@ THE SOFTWARE.
         ctx.closePath();
 
     }
-}
+};
 
 var methods = {
 
@@ -469,7 +470,7 @@ var methods = {
     },
     drawLine: function (data) {
         plugin._drawLine(data.element, data.scale, data.rows, data.columns, data.color, data.width, data.nodes);
-    },
+    }
 };
 
 $.fn.subwayMap = function (method) {
