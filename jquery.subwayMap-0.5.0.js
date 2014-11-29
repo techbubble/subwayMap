@@ -393,12 +393,12 @@ THE SOFTWARE.
                 pos = "text-align: left; padding-left: " + offset + "px; margin: 0 0 " + offset + "px 0";
                 topOffset = offset * 2;
                 break;
-            case "sw": //TODO
-                pos = "text-align: right; margin:0 " + offset + "px 0 -" + (100 + offset) + "px";
+            case "sw":
+                pos = "text-align: right; margin:" + offset + "px 0 0 -" + (100 + offset) + "px";
                 topOffset = offset;
                 break;
-            case "nw": //TODO
-                pos = "text-align: right; margin:0 " + offset + "px 0 -" + (100 + offset) + "px";
+            case "nw":
+                pos = "text-align: right; margin: -" + offset + "px 0 0 -" + (100 + offset) + "px";
                 topOffset = offset;
                 break;
         }
