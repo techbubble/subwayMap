@@ -120,7 +120,7 @@ THE SOFTWARE.
 
         //el.css("width", this.options.pixelWidth);
         //el.css("height", this.options.pixelHeight);
-        self = this;
+        var self = this;
         var lineLabels = [];
         var supportsCanvas = $("<canvas></canvas>")[0].getContext;
         if (supportsCanvas) {
