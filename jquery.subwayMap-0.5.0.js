@@ -2,6 +2,8 @@
 
 Copyright (c) 2010 Nik Kalyani nik@kalyani.com http://www.kalyani.com
 
+Modified work Copyright (c) 2016 Jon Burrows subwaymap@jonburrows.co.uk https://jonburrows.co.uk
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -168,7 +170,10 @@ THE SOFTWARE.
 
                     var markerInfo = $(this).attr("data-markerInfo");
                     if (markerInfo == undefined) markerInfo = "";
-
+                    
+                    var dotted = $(this).attr("data-dotted-line");
+                    if (dotted == undefined) dotted = "false";
+                    
                     var anchor = $(this).children("a:first-child");
                     var label = $(this).text();
                     if (label === undefined) label = "";
@@ -182,7 +187,7 @@ THE SOFTWARE.
                         if (title === undefined) title = "";
                     }
 
-                    self._debug("Coords=" + coords + "; Dir=" + dir + "; Link=" + link + "; Label=" + label + "; labelPos=" + labelPos + "; Marker=" + marker);
+                    self._debug("Coords=" + coords + "; Dir=" + dir + "; Link=" + link + "; Label=" + label + "; labelPos=" + labelPos + "; Marker=" + marker + "; Dotted=" + dotted);
 
                     var x = "";
                     var y = "";
@@ -190,7 +195,7 @@ THE SOFTWARE.
                         x = Number(coords.split(",")[0]) + (marker.indexOf("interchange") > -1 ? 0 : shiftX);
                         y = Number(coords.split(",")[1]) + (marker.indexOf("interchange") > -1 ? 0 : shiftY);
                     }
-                    nodes[nodes.length] = { x: x, y:y, direction: dir, marker: marker, markerInfo: markerInfo, link: link, title: title, label: label, labelPos: labelPos};
+                    nodes[nodes.length] = { x: x, y: y, direction: dir, marker: marker, markerInfo: markerInfo, link: link, title: title, label: label, labelPos: labelPos, dotted: dotted };
                 });
                 if (nodes.length > 0)
                     self._drawLine(el, scale, rows, columns, color, (lineTextClass != "" ? lineTextClass : textClass), lineWidth, nodes, reverseMarkers);
@@ -293,6 +298,7 @@ THE SOFTWARE.
             }
         }
 
+        if (nodes[0].dotted == "true") { ctx.setLineDash([5, 5]); }
         ctx.strokeStyle = color;
         ctx.lineWidth = width;
         ctx.stroke();
