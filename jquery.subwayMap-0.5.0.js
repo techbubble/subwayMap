@@ -134,6 +134,12 @@ THE SOFTWARE.
                 var color = $(ul).attr("data-color");
                 if (color === undefined) color = "#000000";
 
+                var outline = $(ul).attr("data-outline");
+                if (outline != undefined && ((outline === true) || (outline.toLowerCase() == "true")))
+                    outline = true;
+                else 
+                    outline = false;
+
                 var lineTextClass = $(ul).attr("data-textClass");
                 if (lineTextClass === undefined) lineTextClass = "";
 
@@ -197,8 +203,13 @@ THE SOFTWARE.
                     }
                     nodes[nodes.length] = { x: x, y: y, direction: dir, marker: marker, markerInfo: markerInfo, link: link, title: title, label: label, labelPos: labelPos, dotted: dotted };
                 });
-                if (nodes.length > 0)
+
+                if (nodes.length > 0) {
                     self._drawLine(el, scale, rows, columns, color, (lineTextClass != "" ? lineTextClass : textClass), lineWidth, nodes, reverseMarkers);
+                    if (outline === true) 
+                        self._drawLine(el, scale, rows, columns, '#FFFFFF', false, lineWidth - 2, nodes, reverseMarkers);
+                }
+                    
                 $(ul).remove();
             });
 
@@ -305,7 +316,8 @@ THE SOFTWARE.
 
         ctx = this._getCanvasLayer(el, true);
         for (node = 0; node < nodes.length; node++) {
-            this._drawMarker(el, ctx, scale, color, textClass, width, nodes[node], reverseMarkers);
+            if (textClass != false)
+                this._drawMarker(el, ctx, scale, color, textClass, width, nodes[node], reverseMarkers);
         }
 
 
