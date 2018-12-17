@@ -140,6 +140,12 @@ THE SOFTWARE.
                 else 
                     outline = false;
 
+                var dotted = $(ul).attr("data-dotted");
+                if (dotted != undefined && ((dotted === true) || (dotted.toLowerCase() == "true")))
+                    dotted = true;
+                else 
+                    dotted = false;
+
                 var lineTextClass = $(ul).attr("data-textClass");
                 if (lineTextClass === undefined) lineTextClass = "";
 
@@ -176,10 +182,7 @@ THE SOFTWARE.
 
                     var markerInfo = $(this).attr("data-markerInfo");
                     if (markerInfo == undefined) markerInfo = "";
-                    
-                    var dotted = $(this).attr("data-dotted-line");
-                    if (dotted == undefined) dotted = "false";
-                    
+
                     var anchor = $(this).children("a:first-child");
                     var label = $(this).text();
                     if (label === undefined) label = "";
@@ -193,7 +196,7 @@ THE SOFTWARE.
                         if (title === undefined) title = "";
                     }
 
-                    self._debug("Coords=" + coords + "; Dir=" + dir + "; Link=" + link + "; Label=" + label + "; labelPos=" + labelPos + "; Marker=" + marker + "; Dotted=" + dotted);
+                    self._debug("Coords=" + coords + "; Dir=" + dir + "; Link=" + link + "; Label=" + label + "; labelPos=" + labelPos + "; Marker=" + marker);
 
                     var x = "";
                     var y = "";
@@ -201,13 +204,13 @@ THE SOFTWARE.
                         x = Number(coords.split(",")[0]) + (marker.indexOf("interchange") > -1 ? 0 : shiftX);
                         y = Number(coords.split(",")[1]) + (marker.indexOf("interchange") > -1 ? 0 : shiftY);
                     }
-                    nodes[nodes.length] = { x: x, y: y, direction: dir, marker: marker, markerInfo: markerInfo, link: link, title: title, label: label, labelPos: labelPos, dotted: dotted };
+                    nodes[nodes.length] = { x: x, y: y, direction: dir, marker: marker, markerInfo: markerInfo, link: link, title: title, label: label, labelPos: labelPos };
                 });
 
                 if (nodes.length > 0) {
-                    self._drawLine(el, scale, rows, columns, color, (lineTextClass != "" ? lineTextClass : textClass), lineWidth, nodes, reverseMarkers);
+                    self._drawLine(el, scale, rows, columns, color, (lineTextClass != "" ? lineTextClass : textClass), lineWidth, nodes, reverseMarkers, dotted);
                     if (outline === true) 
-                        self._drawLine(el, scale, rows, columns, '#FFFFFF', false, lineWidth - 2, nodes, reverseMarkers);
+                        self._drawLine(el, scale, rows, columns, '#FFFFFF', false, lineWidth - 2, nodes, reverseMarkers, dotted);
                 }
                     
                 $(ul).remove();
@@ -232,7 +235,7 @@ THE SOFTWARE.
 
         }
     },
-    _drawLine: function (el, scale, rows, columns, color, textClass, width, nodes, reverseMarkers) {
+    _drawLine: function (el, scale, rows, columns, color, textClass, width, nodes, reverseMarkers, dotted) {
 
         var ctx = this._getCanvasLayer(el, false);
         ctx.beginPath();
@@ -318,7 +321,8 @@ THE SOFTWARE.
             }
         }
 
-        if (nodes[0].dotted == "true") { ctx.setLineDash([5, 5]); }
+        if (dotted === true) 
+            ctx.setLineDash([5, 5]);
         ctx.strokeStyle = color;
         ctx.lineWidth = width;
         ctx.stroke();
