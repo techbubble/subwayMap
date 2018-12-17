@@ -163,7 +163,7 @@ THE SOFTWARE.
                 if (lineLabel === undefined)
                     lineLabel = "Line " + index;
 
-                lineLabels[lineLabels.length] = {label: lineLabel, color: color, outline: outline};
+                lineLabels[lineLabels.length] = {label: lineLabel, color: color, outline: outline, dotted: dotted };
 
                 var nodes = [];
                 $(ul).children("li").each(function () {
@@ -222,12 +222,17 @@ THE SOFTWARE.
 
                 for(var line=0; line<lineLabels.length; line++) {
                  
-                    // Create a SVG rect for the line
-                    var lineSVG = "<rect x='0' y='0' width='100' height='"+lineWidth+"' fill='" + lineLabels[line].color + "' />";
+                    // Prepare SVG param for dotted lines
+                    var dottedSVGParam = "";
+                    if (lineLabels[line].dotted === true) 
+                        dottedSVGParam = "stroke-dasharray='5, 5'";
+
+                    // Create a SVG line
+                    var lineSVG = "<line x1='0' y1='3' x2='100' y2='3' stroke-width='"+ (lineWidth + 2)  +"' stroke='" + lineLabels[line].color + "' "+ dottedSVGParam +" />";
                     
-                    // We create a second SVG white rect to create the outline effect in the legend if required by the "outline" param
+                    // We create a second SVG white line to create the outline effect in the legend if required by the "outline" param
                     if (lineLabels[line].outline === true) 
-                        lineSVG += "<rect x='0' y='1' width='100' height='"+ (lineWidth - 2) +"' fill='#FFFFFF' />";
+                        lineSVG += "<line x1='0' y1='4' x2='100' y2='4' stroke-width='"+ ( (lineWidth + 2) / 2 ) +"' stroke='#FFFFFF' "+ dottedSVGParam +" />";
                  
                     legend.append("<div><span style='float:left; display:bock;width:100px;height:" + lineWidth + "px;'><svg>" + lineSVG + "</svg></span>" + lineLabels[line].label + "</div>");
                 }  
