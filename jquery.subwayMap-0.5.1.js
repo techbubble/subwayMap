@@ -157,7 +157,7 @@ THE SOFTWARE.
                 if (lineLabel === undefined)
                     lineLabel = "Line " + index;
 
-                lineLabels[lineLabels.length] = {label: lineLabel, color: color};
+                lineLabels[lineLabels.length] = {label: lineLabel, color: color, outline: outline};
 
                 var nodes = [];
                 $(ul).children("li").each(function () {
@@ -217,8 +217,17 @@ THE SOFTWARE.
             {
                 var legend = $("#" + legendId);
 
-                for(var line=0; line<lineLabels.length; line++)
-                    legend.append("<div><span style='float:left;width:100px;height:" + lineWidth + "px;background-color:" + lineLabels[line].color + "'></span>" + lineLabels[line].label + "</div>");
+                for(var line=0; line<lineLabels.length; line++) {
+                 
+                    // Create a SVG rect for the line
+                    var lineSVG = "<rect x='0' y='0' width='100' height='"+lineWidth+"' fill='" + lineLabels[line].color + "' />";
+                    
+                    // We create a second SVG white rect to create the outline effect in the legend if required by the "outline" param
+                    if (lineLabels[line].outline === true) 
+                        lineSVG += "<rect x='0' y='1' width='100' height='"+ (lineWidth - 2) +"' fill='#FFFFFF' />";
+                 
+                    legend.append("<div><span style='float:left; display:bock;width:100px;height:" + lineWidth + "px;'><svg>" + lineSVG + "</svg></span>" + lineLabels[line].label + "</div>");
+                }  
             }
 
         }
