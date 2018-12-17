@@ -140,6 +140,12 @@ THE SOFTWARE.
                 else 
                     outline = false;
 
+                var dotted = $(ul).attr("data-dotted");
+                if (dotted != undefined && ((dotted === true) || (dotted.toLowerCase() == "true")))
+                    dotted = true;
+                else 
+                    dotted = false;
+
                 var lineTextClass = $(ul).attr("data-textClass");
                 if (lineTextClass === undefined) lineTextClass = "";
 
@@ -157,7 +163,7 @@ THE SOFTWARE.
                 if (lineLabel === undefined)
                     lineLabel = "Line " + index;
 
-                lineLabels[lineLabels.length] = {label: lineLabel, color: color};
+                lineLabels[lineLabels.length] = {label: lineLabel, color: color, outline: outline, dotted: dotted };
 
                 var nodes = [];
                 $(ul).children("li").each(function () {
@@ -176,10 +182,7 @@ THE SOFTWARE.
 
                     var markerInfo = $(this).attr("data-markerInfo");
                     if (markerInfo == undefined) markerInfo = "";
-                    
-                    var dotted = $(this).attr("data-dotted-line");
-                    if (dotted == undefined) dotted = "false";
-                    
+
                     var anchor = $(this).children("a:first-child");
                     var label = $(this).text();
                     if (label === undefined) label = "";
@@ -193,7 +196,7 @@ THE SOFTWARE.
                         if (title === undefined) title = "";
                     }
 
-                    self._debug("Coords=" + coords + "; Dir=" + dir + "; Link=" + link + "; Label=" + label + "; labelPos=" + labelPos + "; Marker=" + marker + "; Dotted=" + dotted);
+                    self._debug("Coords=" + coords + "; Dir=" + dir + "; Link=" + link + "; Label=" + label + "; labelPos=" + labelPos + "; Marker=" + marker);
 
                     var x = "";
                     var y = "";
@@ -201,13 +204,13 @@ THE SOFTWARE.
                         x = Number(coords.split(",")[0]) + (marker.indexOf("interchange") > -1 ? 0 : shiftX);
                         y = Number(coords.split(",")[1]) + (marker.indexOf("interchange") > -1 ? 0 : shiftY);
                     }
-                    nodes[nodes.length] = { x: x, y: y, direction: dir, marker: marker, markerInfo: markerInfo, link: link, title: title, label: label, labelPos: labelPos, dotted: dotted };
+                    nodes[nodes.length] = { x: x, y: y, direction: dir, marker: marker, markerInfo: markerInfo, link: link, title: title, label: label, labelPos: labelPos };
                 });
 
                 if (nodes.length > 0) {
-                    self._drawLine(el, scale, rows, columns, color, (lineTextClass != "" ? lineTextClass : textClass), lineWidth, nodes, reverseMarkers);
+                    self._drawLine(el, scale, rows, columns, color, (lineTextClass != "" ? lineTextClass : textClass), lineWidth, nodes, reverseMarkers, dotted);
                     if (outline === true) 
-                        self._drawLine(el, scale, rows, columns, '#FFFFFF', false, lineWidth - 2, nodes, reverseMarkers);
+                        self._drawLine(el, scale, rows, columns, '#FFFFFF', false, lineWidth - 2, nodes, reverseMarkers, dotted);
                 }
                     
                 $(ul).remove();
@@ -217,13 +220,27 @@ THE SOFTWARE.
             {
                 var legend = $("#" + legendId);
 
-                for(var line=0; line<lineLabels.length; line++)
-                    legend.append("<div><span style='float:left;width:100px;height:" + lineWidth + "px;background-color:" + lineLabels[line].color + "'></span>" + lineLabels[line].label + "</div>");
+                for(var line=0; line<lineLabels.length; line++) {
+                 
+                    // Prepare SVG param for dotted lines
+                    var dottedSVGParam = "";
+                    if (lineLabels[line].dotted === true) 
+                        dottedSVGParam = "stroke-dasharray='5, 5'";
+
+                    // Create a SVG line
+                    var lineSVG = "<line x1='0' y1='3' x2='100' y2='3' stroke-width='"+ (lineWidth + 2)  +"' stroke='" + lineLabels[line].color + "' "+ dottedSVGParam +" />";
+                    
+                    // We create a second SVG white line to create the outline effect in the legend if required by the "outline" param
+                    if (lineLabels[line].outline === true) 
+                        lineSVG += "<line x1='0' y1='4' x2='100' y2='4' stroke-width='"+ ( (lineWidth + 2) / 2 ) +"' stroke='#FFFFFF' "+ dottedSVGParam +" />";
+                 
+                    legend.append("<div><span style='float:left; display:bock;width:100px;height:" + lineWidth + "px;'><svg>" + lineSVG + "</svg></span>" + lineLabels[line].label + "</div>");
+                }  
             }
 
         }
     },
-    _drawLine: function (el, scale, rows, columns, color, textClass, width, nodes, reverseMarkers) {
+    _drawLine: function (el, scale, rows, columns, color, textClass, width, nodes, reverseMarkers, dotted) {
 
         var ctx = this._getCanvasLayer(el, false);
         ctx.beginPath();
@@ -309,7 +326,8 @@ THE SOFTWARE.
             }
         }
 
-        if (nodes[0].dotted == "true") { ctx.setLineDash([5, 5]); }
+        if (dotted === true) 
+            ctx.setLineDash([5, 5]);
         ctx.strokeStyle = color;
         ctx.lineWidth = width;
         ctx.stroke();
