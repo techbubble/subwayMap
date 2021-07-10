@@ -234,7 +234,7 @@ THE SOFTWARE.
                     if (lineLabels[line].outline === true) 
                         lineSVG += "<line x1='0' y1='4' x2='100' y2='4' stroke-width='"+ ( (lineWidth + 2) / 2 ) +"' stroke='#FFFFFF' "+ dottedSVGParam +" />";
                  
-                    legend.append("<div><span style='float:left; display:bock;width:100px;height:" + lineWidth + "px;'><svg>" + lineSVG + "</svg></span>" + lineLabels[line].label + "</div>");
+                    legend.append("<div><span style='float:left; display:block;width:100px;height:" + lineWidth + "px;'><svg>" + lineSVG + "</svg></span>" + lineLabels[line].label + "</div>");
                 }  
             }
 
